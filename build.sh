@@ -3,7 +3,9 @@
 #   by Nickolay Ponomarev <asqueella@gmail.com>
 #   (original version based on Nathan Yergler's build script)
 # Most recent version is at <http://kb.mozillazine.org/Bash_build_script>
-
+#
+# Some fixes applied by rnewman.
+#
 # This script assumes the following directory structure:
 # ./
 #   chrome.manifest (optional - for newer extensions)
@@ -39,6 +41,8 @@ BEFORE_BUILD=      # run this before building       (bash command)
 AFTER_BUILD=       # ...and this after the build    (bash command)
 PUSH_TO_DEVICE=    # push add-on to Android device after build. Assumes adb is installed (1/0)
 ANDROID_APP_ID=    # Firefox for Android app id (e.g. org.mozilla.firefox, org.mozilla.fennec)
+MKDIR="mkdir -p"
+CPPARENTS="rsync -R"
 
 if [ -z $1 ]; then
   . ./config_build.sh
@@ -64,32 +68,34 @@ rm -rf $TMP_DIR
 
 $BEFORE_BUILD
 
-mkdir --parents --verbose $TMP_DIR/chrome
+$MKDIR $TMP_DIR/chrome
 
 # generate the JAR file, excluding CVS, SVN, and temporary files
 JAR_FILE=$TMP_DIR/chrome/$APP_NAME.jar
 echo "Generating $JAR_FILE..."
+rm -f files ; touch files
 for CHROME_SUBDIR in $CHROME_PROVIDERS; do
   find $CHROME_SUBDIR \( -path '*CVS*' -o -path '*.svn*' \) -prune -o -type f -print | grep -v \~ >> files
 done
 
 zip -0 -r $JAR_FILE -@ < files
+echo $JAR_FILE > files
 # The following statement should be used instead if you don't wish to use the JAR file
 #cp --verbose --parents `cat files` $TMP_DIR/chrome
 
 # prepare components and defaults
 echo "Copying various files to $TMP_DIR folder..."
 for DIR in $ROOT_DIRS; do
-  mkdir $TMP_DIR/$DIR
+  $MKDIR $TMP_DIR/$DIR
   FILES="`find $DIR \( -path '*CVS*' -o -path '*.svn*' \) -prune -o -type f -print | grep -v \~`"
   echo $FILES >> files
-  cp --verbose --parents $FILES $TMP_DIR
+  $CPPARENTS $FILES $TMP_DIR
 done
 
 # Copy other files to the root of future XPI.
 for ROOT_FILE in $ROOT_FILES install.rdf chrome.manifest; do
-  cp --verbose $ROOT_FILE $TMP_DIR
   if [ -f $ROOT_FILE ]; then
+    cp $ROOT_FILE $TMP_DIR
     echo $ROOT_FILE >> files
   fi
 done
@@ -130,7 +136,7 @@ echo "Done!"
 $AFTER_BUILD
 
 if [ $PUSH_TO_DEVICE = 1 ]; then
-  adb push ../$APP_NAME.xpi /sdcard/$APP_NAME.xpi
+  adb push ./$APP_NAME.xpi /sdcard/$APP_NAME.xpi
   adb shell am start -a android.intent.action.VIEW \
                      -c android.intent.category.DEFAULT \
                      -d file:///mnt/sdcard/$APP_NAME.xpi \
