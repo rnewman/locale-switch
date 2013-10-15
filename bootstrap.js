@@ -4,18 +4,31 @@ Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
 var gNativeWindow;
+var gBrowserApp;
 var gCrashesMenuId;
+var gHealthMenuId;
 
 function LOG(msg) {
   Services.console.logStringMessage("About Pages Add-On -- " + msg);
 }
 
+function aboutHealth() {
+  gBrowserApp.addTab("about:healthreport");
+}
+
 function aboutCrashes() {
-  window.open("about:crashes");
+  gBrowserApp.addTab("about:crashes");
 }
 
 function loadIntoWindow(window) {
   gNativeWindow = window.NativeWindow;
+  gBrowserApp = window.BrowserApp;
+
+  gHealthMenuId = gNativeWindow.menu.add({
+    name: "about:healthreport",
+    callback: aboutHealth,
+    parent: gNativeWindow.menu.toolsMenuID
+  });
 
   gCrashesMenuId = gNativeWindow.menu.add({
     name: "about:crashes",
@@ -26,6 +39,7 @@ function loadIntoWindow(window) {
 
 function unloadFromWindow(window) {
   gNativeWindow.menu.remove(gCrashesMenuId);
+  gNativeWindow.menu.remove(gHealthMenuId);
 }
 
 /**
