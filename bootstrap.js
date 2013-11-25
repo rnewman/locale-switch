@@ -5,41 +5,32 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 var gNativeWindow;
 var gBrowserApp;
-var gCrashesMenuId;
-var gHealthMenuId;
 
 function LOG(msg) {
-  Services.console.logStringMessage("About Pages Add-On -- " + msg);
+  Services.console.logStringMessage("Locale Switcher Add-On -- " + msg);
 }
 
-function aboutHealth() {
-  gBrowserApp.addTab("about:healthreport");
-}
-
-function aboutCrashes() {
-  gBrowserApp.addTab("about:crashes");
+let menuItems = [];
+function addLocaleEntry(locale) {
+  menuItems.push(gNativeWindow.menu.add({
+    name: locale,
+    callback: function () {
+      gBrowserApp.setLocale(locale);
+    },
+    parent: gNativeWindow.menu.toolsMenuID,
+  });
 }
 
 function loadIntoWindow(window) {
   gNativeWindow = window.NativeWindow;
   gBrowserApp = window.BrowserApp;
 
-  gHealthMenuId = gNativeWindow.menu.add({
-    name: "about:healthreport",
-    callback: aboutHealth,
-    parent: gNativeWindow.menu.toolsMenuID
-  });
-
-  gCrashesMenuId = gNativeWindow.menu.add({
-    name: "about:crashes",
-    callback: aboutCrashes,
-    parent: gNativeWindow.menu.toolsMenuID
-  });
+  addLocaleEntry("en_US");
+  addLocaleEntry("es_ES");
 }
 
 function unloadFromWindow(window) {
-  gNativeWindow.menu.remove(gCrashesMenuId);
-  gNativeWindow.menu.remove(gHealthMenuId);
+  // TODO
 }
 
 /**

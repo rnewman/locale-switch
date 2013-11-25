@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
     <Description about="urn:mozilla:install-manifest">
-        <em:id>about-pages@twinql.com</em:id>
+        <em:id>locale-switcher@twinql.com</em:id>
         <em:type>2</em:type>
-        <em:name>About Pages</em:name>
+        <em:name>Locale Switcher</em:name>
         <em:version>1.0</em:version>
         <em:bootstrap>true</em:bootstrap>
-        <em:description>Open about: pages more easily.</em:description>
+        <em:description>Switch locales within Fennec.</em:description>
         <em:creator>Richard Newman</em:creator>
 
         <!-- Mobile -->
         <em:targetApplication>
             <Description>
                 <em:id>{aa3c5121-dab2-40e2-81ca-7ea25febc110}</em:id>
-                <em:minVersion>23.0</em:minVersion>
-                <em:maxVersion>27.*</em:maxVersion>
+                <em:minVersion>28.*</em:minVersion>
+                <em:maxVersion>29.*</em:maxVersion>
             </Description>
         </em:targetApplication>
 
