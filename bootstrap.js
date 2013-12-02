@@ -10,6 +10,31 @@ function LOG(msg) {
   Services.console.logStringMessage("Locale Switcher Add-On -- " + msg);
 }
 
+let supported = [
+  "en-US",
+
+  "cs",
+  "da",
+  "de",
+  "es-ES",
+  "es_ES",
+  "fi",
+  "fr",
+  "ja",
+  "ko",
+  "it",
+  "nb-NO",
+  "nl",
+  "pl",
+  "pt-BR",
+  "pt-PT",
+  "ru",
+  "sk",
+  "sv-SE",
+  "zh-CN",
+  "zh-TW",
+];
+
 let menuItems = [];
 function addLocaleEntry(locale) {
   menuItems.push(gNativeWindow.menu.add({
@@ -25,8 +50,9 @@ function loadIntoWindow(window) {
   gNativeWindow = window.NativeWindow;
   gBrowserApp = window.BrowserApp;
 
-  addLocaleEntry("en_US");
-  addLocaleEntry("es_ES");
+  for (let loc of supported) {
+    addLocaleEntry(loc);
+  }
 }
 
 function unloadFromWindow(window) {
