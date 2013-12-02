@@ -43,7 +43,7 @@ function addLocaleEntry(locale) {
       gBrowserApp.setLocale(locale);
     },
     parent: gNativeWindow.menu.toolsMenuID,
-  });
+  }));
 }
 
 function loadIntoWindow(window) {
